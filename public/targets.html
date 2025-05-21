@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Torn Targets Dashboard</title>
+  <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<h1>Torn Targets</h1>
+
+<!-- Form to add new target -->
+<form id="addTargetForm">
+  <input type="text" id="userIdInput" placeholder="Enter Player ID" required />
+  <button type="submit">Add Target</button>
+  <button id="updateAllButton">Update All Targets</button>
+</form>
+
+<!-- Where targets will be displayed -->
+<div id="targetsContainer"></div>
+
+<script>
+  const targetsContainer = document.getElementById('targetsContainer');
+  const addTargetForm = document.getElementById('addTargetForm');
+  const userIdInput = document.getElementById('userIdInput');
+
+  // Function to render a target card
+// Function to render a target card
+function renderTarget(target) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  
+  // Apply an effect if the status is not "Okay"
+  if (target.status.description !== "Okay") {
+    card.classList.add('alert-status'); // Add special class for non-Okay status
+  }
+  
+  // Make the whole card clickable
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', () => {
+    window.open(`https://www.torn.com/profiles.php?XID=${target.player_id}`, '_blank');
+  });
+
+  card.innerHTML = `
+    <h2>${target.name}</h2>
+    <img src="${target.profile_image}" class="profile-img" alt="Profile Image" />
+    <div class="info"><strong>Level:</strong> ${target.level}</div>
+    <div class="info"><strong>Age:</strong> ${target.age} days</div>
+    <div class="info"><strong>Life:</strong> ${target.life.current} / ${target.life.maximum}</div>
+    <div class="info"><strong>Status:</strong> ${target.status.description}</div>
+    <div class="info"><strong>Last Active:</strong> ${target.last_action.relative}</div>
+    <button class="delete-btn">x</button>
+  `;
+
+  // Add the delete functionality
+  const deleteBtn = card.querySelector('.delete-btn');
+  deleteBtn.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent the card click from being triggered
+
+    try {
+      const response = await fetch(`/api/target/${target.player_id}`, { method: 'DELETE' });
+      const result = await response.json();
+
+      if (response.ok) {
+        // Remove the target from the UI
+        card.remove();
+        alert('Target deleted successfully');
+      } else {
+        alert(result.message || 'Failed to delete target.');
+      }
+    } catch (error) {
+      console.error('Error deleting target:', error);
+      alert('Error deleting target.');
+    }
+  });
+
+  // Append the card to the targets container
+  targetsContainer.appendChild(card);
+}
+
+// Function to load all targets
+  async function loadTargets() {
+    try {
+      const response = await fetch('/api/target/all');
+      const result = await response.json();
+
+      if (response.ok) {
+        targetsContainer.innerHTML = ''; // Clear container first
+        result.data.forEach(target => renderTarget(target)); // Render each target
+      } else {
+        alert(result.message || 'Failed to fetch targets.');
+      }
+    } catch (error) {
+      console.error('Error loading targets:', error);
+      alert('Error loading targets.');
+    }
+  }
+
+// Handle the update all targets functionality
+updateAllButton.addEventListener('click', async (e) => {
+  e.preventDefault(); // Prevent form submission if button is inside a form
+
+  try {
+    const response = await fetch('/api/target/update');
+    const result = await response.json();
+
+    if (response.ok) {
+      // Clear the current targets container
+      targetsContainer.innerHTML = '';
+
+      // Re-render all updated targets
+      result.data.forEach(target => renderTarget(target));
+
+      // Display confirmation message
+      displayConfirmation('All targets have been updated successfully.');
+    } else {
+      alert(result.message || 'Failed to update targets.');
+    }
+  } catch (error) {
+    console.error('Error updating targets:', error);
+    alert('Error updating targets.');
+  }
+});
+
+// Function to display the confirmation message
+function displayConfirmation(message) {
+  // Create a new div for the confirmation message
+  const confirmationDiv = document.createElement('div');
+  confirmationDiv.className = 'confirmation-message';
+  confirmationDiv.innerText = message;
+
+  // Append the confirmation message to the body or a specific container
+  document.body.appendChild(confirmationDiv);
+
+  // Set a timeout to remove the message after 3 seconds
+  setTimeout(() => {
+    confirmationDiv.remove();
+  }, 3000);
+}
+// Function to add a new target
+  addTargetForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userId = userIdInput.value.trim();
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`/api/target/user/${userId}`);
+      const result = await response.json();
+
+      if (response.ok) {
+        loadTargets(); // Reload all targets after adding
+        userIdInput.value = '';
+      } else {
+        alert(result.message || 'Failed to add target.');
+      }
+    } catch (error) {
+      console.error('Error adding target:', error);
+      alert('Error adding target.');
+    }
+  });
+
+  // Load all targets when the page loads
+  window.addEventListener('DOMContentLoaded', loadTargets);
+</script>
+
+
+</body>
+</html>

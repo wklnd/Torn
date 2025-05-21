@@ -1,0 +1,168 @@
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+#targetsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; /* Center the cards horizontally */
+}
+
+.card {
+  position: relative; /* Allows absolute positioning of the delete button */
+  width: 200px;
+  margin: 10px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card img.profile-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.card .info {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.card button.delete-btn {
+  position: absolute;
+  top: 5px;  /* Adjusted to give a little space from the top */
+  right: 5px; /* Adjusted to give a little space from the right */
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px; /* Slightly larger to ensure the x fits well */
+  height: 30px; /* Slightly larger to ensure the x fits well */
+  font-size: 20px; /* Adjust font size to ensure the x is centered */
+  font-weight: bold;
+  display: flex;
+  justify-content: center; /* Centers the x horizontally */
+  align-items: center; /* Centers the x vertically */
+  cursor: pointer;
+}
+
+.card button.delete-btn:hover {
+  background-color: darkred;
+}
+
+/* Add a special class for non-"Okay" statuses */
+.card.alert-status {
+  border: 2px solid red;
+  background-color: #ffe6e6; /* Light red background */
+  animation: shake 0.5s ease; /* Optional: shaking effect */
+}
+
+/* Add a hover effect for the delete button */
+.card.alert-status .delete-btn {
+  background-color: darkred;
+}
+
+/* Optional: Adding a shaking animation to make it stand out */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* Style the confirmation message */
+.confirmation-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional: Add a fade-out effect when the confirmation message is removed */
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.confirmation-message {
+  animation: fadeOut 3s ease-out;
+}
+
+/* Styles for the profile section */
+
+
+.profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.info {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+}
+
+button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
