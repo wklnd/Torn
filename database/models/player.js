@@ -31,5 +31,5 @@ const playerSchema = new mongoose.Schema({
 });
 
 const Player = mongoose.model('Player', playerSchema);
-
+// Also add money, stocks, bank here: 
 module.exports = Player;
